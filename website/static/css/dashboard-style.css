@@ -1,0 +1,336 @@
+body{
+	background: var(--light-bg);
+	color: var(--light-text);
+	font-family: "Segoe UI";
+}
+header{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+/* Screens */
+#main-screen, #create-screen, #profile-screen, #document-upload-screen, #order-screen{
+	height: 100vh;
+	background: var(--light-bg);
+}
+
+/* Main Screen */
+.header-profile{
+	padding-top: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.header-profile img{
+	aspect-ratio: 1/1;
+	width: 40px;
+	border-radius: 10pc;
+}
+.header-profile img:nth-child(1){
+	border: 5px solid transparent;
+	padding: 5px;
+	box-shadow: 0 0 3rem rgba(214, 113, 77, 0.5);
+}
+
+.welcome-text{
+	background: linear-gradient(45deg, #081734, #0db2ec);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-size: 40px;
+}
+
+.search-container form{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.search-container form button{
+	aspect-ratio: 1/1;
+	width: 60px;
+	border-radius: 10pc;
+	outline: none;
+	border: 0;
+	background: rgb(214, 133, 77, 1.0);
+  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.1);
+
+}
+.search-container form button img{
+	height: 30px;
+	width: 30px;
+}
+.suggestions{
+	background: white;
+	box-shadow: 0px -20px 20rem 20px rgba(255, 255, 255, 0.5);
+	border-radius: 0px 0px 10px 10px;
+/*	border: 1px solid black;*/
+
+	display: grid;
+	place-items: center;
+	display: none;
+}
+.suggestions li{
+	list-style: none;
+	width: 100%;
+	text-align: left;
+	padding: 10px;
+	border-top: 3px solid rgb(214, 133, 77, 0.5);
+}
+
+.filters{
+	width: 100%;
+	margin-top: 20px;
+	height: 70px;
+}
+.filters form{
+	width: 100%;
+	margin-top: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+  flex-direction: column;
+	height: 70px;
+}
+.active-filter, .filter{
+	height: 60px;
+	font-weight: bolder;
+	font-size: 16px;
+	width: 100px;
+	padding: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+	box-shadow: 0 0 2rem rgba(0, 0, 0, 0.1);
+	outline: none;
+	border: 0;
+	border-radius: 10pc;
+	background: white;
+}
+.active-filter{
+	background: rgba(214, 133, 77, 0.9);
+	color: white;
+	font-weight: normal;
+}
+
+.product-order{
+	background: #d6e3e4;/*#b9ebf0;*/
+	border-radius: 20px;
+	margin-bottom: 10px;
+	width: 100%;
+	display: grid;
+	place-items: center;
+}
+.product-order .info{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.number-of-copies, .description{
+	width: 50%;
+}
+.number-of-copies{
+	background: #f3f3f3;
+	box-shadow: 0rem 0rem 1rem 0px rgba(0, 0, 0, 0.5);
+	height: 220px;
+	display: grid;
+	margin: 10px;
+	border-radius: 20px;
+	place-items: center;
+}
+
+.number-of-copies span:nth-child(1){
+	font-size: 100px;
+	font-weight: bolder;	
+}
+.description{
+	margin: 10px;
+}
+.delivery_period, .narration_container{
+	background: #f3f3f3;
+	margin: 5px;
+	box-shadow: 0rem 0rem 1rem 0px rgba(0, 0, 0, 0.2);
+	padding: 5px;
+	border-radius: 20px;
+}
+.delivery_period span:nth-child(1){
+	font-weight: bolder;
+	font-size: 20px;
+}
+.delivery_time_container{
+	width: 90%;
+	padding: 10px;
+	box-shadow: 0rem 0rem 1rem 0px rgba(0, 0, 0, 0.3);
+	border-radius: 20px;
+	margin-bottom: 10px;
+	background: #f3f3f3;
+	display: grid;
+	place-items: center;
+}
+.view-order{
+	width: 100%;
+  background: #d6e3e4;
+  border-radius: 20px;
+  text-align: center;
+}
+.time_counter{
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+
+.order-list-view{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #dde3e3;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 20px;
+}
+.olv-count{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: white;
+	font-weight: bolder;
+	aspect-ratio: 1/1;
+	width: 50px;
+	font-size: 30px;
+	border-radius: 10px;
+}
+.olv-close{
+	background: lightpink;
+	color: purple;
+	padding: 5px;
+	border-radius: 10px;
+}
+.olv-price{
+	font-weight: bolder;
+}
+/* Inputs  */
+.BasicInputs{
+  /*width: 90%;
+  padding: 10px;
+  outline: none;
+  border: none;
+  background: var(--light-bg);
+  margin: 10px;
+  border-radius: 0.5rem;
+  font-size: 16px;
+  border: 1px solid var(--light-text);
+  color: #cccccc;
+  color: var(--light-text);
+
+  outline: none;*/
+
+  margin: 10px;
+  border: 0;
+  width: 80%;
+  background: #dbdbdb;
+  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+}
+.BasicInputs-textarea{
+	width: 90%;
+	height: 140px;
+	padding: 10px;
+	outline: none;
+	border: none;
+	background: var(--light-bg);
+	margin: 10px;
+	border-radius: 0.5rem;
+	font-size: 16px;
+	border: 1px solid var(--light-text);
+	color: var(--light-text);
+}
+.button-esd{
+  background: #29509c;/*#081734;*/
+  padding: 10px;
+  width: 80%;
+  outline: none;
+  border: 0;
+  color: white;
+  margin: 10px;
+  border-radius: 20px;
+}
+#create-screen .form-container{
+	display: grid;
+	place-items: center;
+}
+.form-price-container article{
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+}
+.form-price-container{
+	display: grid;
+	place-items: center;
+}
+.form-price-container div{
+	background: #dbdbdb;
+	border-radius: 20px;
+	color: grey;
+	width: 80%;
+	padding: 10px;
+}
+.form-period-container{
+	width: 100%;
+	display: grid;
+	place-items: center;
+	margin-top: 20px;
+}
+.form-period-container span:nth-child(1), .form-files span:nth-child(1){
+	font-size: 20px;
+	font-weight: bolder;
+	transform: scale(1.5);
+}
+.form-files {
+	display: grid;
+	place-items: center;
+}
+.form-files div{
+	background: #dbdbdb;
+	aspect-ratio: 3/2;
+	width: 80%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 20px;
+}
+
+/* Navigation  */
+nav{
+	background: #29509c;
+	position: fixed;
+	bottom: 0;
+	width: 80%;
+	height: 30px;
+	padding: 25px;
+	border-radius: 10pc;
+	display: flex;
+	margin-bottom: 20px;
+	align-items: center;
+	justify-content: space-between;
+}
+nav div {
+	transition: 0.3s ease-in-out;
+}
+nav div img, nav div:hover{
+	background: whitesmoke;
+	aspect-ratio: 1/1;
+	width: 50px;
+	border-radius: 10pc;
+	display: flex; align-items: center; justify-content: center;
+}
+nav div img{
+	width: 30px;
+	transition: 0.5s ease-in-out;
+	background: transparent;
+}
+nav div img:hover{
+	transform: scale(1.05);
+}

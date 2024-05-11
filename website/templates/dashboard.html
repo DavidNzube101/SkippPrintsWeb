@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Dashboard</title>
+	<link rel="stylesheet" type="text/css" href=" {{ url_for('static', filename='css/dashboard-style.css') }} ">
+</head>
+<body>
+
+	<div class="load-esd" style="display: none;">
+		Loader...
+	</div>
+
+	<div class="screen-container">
+		<main id="main-screen">
+			<h2 class="welcome-text">Welcome {{ CUser['name'] }} </h2>
+
+			<h2>Your Orders</h2>
+			{% if UserOrders %}
+				{% for UserOrder in UserOrders %}
+					<div class="product-order">
+						<div class="info">
+							<div class="number-of-copies">
+							
+								<span>{{ UserOrder['number_of_copies'] }}</span>
+								<span>Number of copies</span>
+							
+							</div>
+							<div class="description">
+								<div style="height: 100px;" class="narration_container">
+									<span class="Narration"><b>Narration: </b>{{ UserOrder['narration'] }}.</span><br>
+								</div>
+								<div class="delivery_period">
+									<span>Delivery Details</span>
+									<span class="delivery_period_date">{{ DTK.clean_date(UserOrder['delivery_period_date']) }}</span><br>
+									<span class="delivery_period_time">{{ UserOrder['delivery_period_time'] }}</span><br>
+									<span class="delivery_period_address"> {{ UserOrder['delivery_address_period'] }} </span>
+								</div>
+							</div>
+						</div>
+						<div class="delivery_time_container">
+							<p>Estimated delivery time</p>
+							<style type="text/css">
+								.seconds_{{ UserOrder['id'] }}, .hour_{{ UserOrder['id'] }}, .minute_{{ UserOrder['id'] }}{
+								/*	padding: 10px;*/
+									margin-left: 10px;
+									margin-right: 10px;
+									font-size: 30px;
+									transform: scale(1.15);
+									font-weight: bolder;
+									font-family: monospace;
+								}
+							</style>
+							<div class="time_counter">
+								<p class="hour_{{ UserOrder['id'] }}">00</p>
+								:
+								<p class="minute_{{ UserOrder['id'] }}">00</p>
+								:
+								<p class="seconds_{{ UserOrder['id'] }}">00</p>
+							</div>
+							<script type="text/javascript">
+								let countDownTimer_{{ UserOrder['id'] }} = (h, m, s) => {
+									let timer_{{ UserOrder['id'] }} = setInterval(() => {
+										if (s > 0) {
+											s--
+										} else if (m > 0) {
+											m--
+											s = 59
+										} else if (h > 0) {
+											h--
+											m = 59
+										} else {
+											clearInterval(timer_{{ UserOrder['id'] }})
+											console.log("Time elapsed")
+										}
+
+										let hString_{{ UserOrder['id'] }} = h.toString().padStart(2, "0")
+										let mString_{{ UserOrder['id'] }} = m.toString().padStart(2, "0")
+										let sString_{{ UserOrder['id'] }} = s.toString().padStart(2, "0")
+										console.log(`${hString_{{ UserOrder['id'] }}}:${mString_{{ UserOrder['id'] }}}:${sString_{{ UserOrder['id'] }}}`)
+										document.querySelector(".hour_{{ UserOrder['id'] }}").innerHTML = hString_{{ UserOrder['id'] }}
+										document.querySelector(".minute_{{ UserOrder['id'] }}").innerHTML = mString_{{ UserOrder['id'] }}
+										document.querySelector(".seconds_{{ UserOrder['id'] }}").innerHTML = sString_{{ UserOrder['id'] }}
+									}, 1000)
+								}
+
+								countDownTimer_{{ UserOrder['id'] }}({{ TimeDifference(UserOrder['delivery_period_time'], CurrentTime)[0] }}, {{ TimeDifference(UserOrder['delivery_period_time'], CurrentTime)[1] }}, {{ TimeDifference(UserOrder['delivery_period_time'], CurrentTime)[2] }})
+							</script>
+							<div class="view-order">
+								<a style="text-decoration: none; color: black;" href="/view-order/{{ CUser['name'] }}/order/{{ UserOrder['id'] }}"><p>View Order</p></a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% else %}
+				<p style="color: grey;" align="center">No orders yet!</p>
+			{% endif %}
+
+			<div id="html-break">{{ HTMLBreak_('5') }}</div>
+		</main>
+
+		<main id="create-screen" style="display: none;">
+			<h2 class="welcome-text">Order</h2>
+			<h2>Order a print</h2>
+			<form action="/create-order" class="form-container" method="POST">
+				<input class="BasicInputs order-narration" name="narration" placeholder="Narration" required type="text">
+				<div class="form-price-container">
+					<article>
+						<input class="BasicInputs order-number_of_copies" name="noc" value="0" placeholder="Number of items" required type="number" max="50">
+						<input class="BasicInputs order-price" name="price" value="&#8358; 0.00" placeholder="Price" required type="hidden">
+						<input class="BasicInputs order-price2" name="price2" value="&#8358; 0.00" placeholder="Price" required type="text" disabled>
+						<button type="button" onclick="calculatePrice()" class="button-esd calculate-price">Calculate</button>
+					</article>
+					<div class="cost_breakdown">
+						Price Per Page (Colored) = &#8358;400
+
+						<!-- <div class="html-break">{{ HTMLBreak_("1") }}</div> -->
+						<br>
+						
+						Price Per Page (Black & White) = &#8358;300
+
+						<!-- <div class="html-break">{{ HTMLBreak_("1") }}</div> -->
+						<br>
+						
+						Delivery Cost = &#8358;1000
+					</div>
+				</div>
+				<div class="form-period-container">
+					<span>Delivery Date</span><br><span>set a date you'll be available</span><br>
+					<input required class="BasicInputs order-delivery_date_period" name="delivery_date_period" placeholder="Delivery Date" type="date">
+				</div>
+				<div class="form-period-container">
+					<span>Delivery Time</span><br><span>set a time you'll be available</span><br>
+					<input required class="BasicInputs order-delivery_time_period" name="delivery_time_period" placeholder="Delivery Time" type="time">
+				</div>
+				<div class="form-period-container">
+					<span>Delivery Address</span><br><span>set an address you'll be available</span><br>
+					<input required class="BasicInputs order-delivery_address_period" name="delivery_address_period" placeholder="Delivery Address" type="text">
+				</div>
+
+				<select required name="address_close" required class="BasicInputs">
+					<option>Select a location close to you</option>
+					<option>Umuchima</option>
+					<option>Eziobodo</option>
+				</select>
+
+				<input type="number" required name="phone_num" placeholder="Phone Number" class="BasicInputs">
+
+				<select required name="print_format" class="order-print-format BasicInputs">
+					<option>Select print format</option>
+					<option>Coloured Format</option>
+					<option>Black & White Format</option>
+				</select>
+
+				<button class="button-esd" id="next-order-btn">Next</button>
+			</form>
+
+			<div id="html-break"> {{ HTMLBreak_("6") }} </div>
+		</main>
+
+		<main id="profile-screen" style="display: none;">
+			<h2 class="welcome-text">Profile</h2>
+		</main>
+
+		<main id="order-screen" style="display: none;">
+			<h2 class="welcome-text">Order Summary</h2>
+
+			{% if OrderData != "None" %}
+				
+				<div class="order-reciept" style="background: #f5f5f5; padding: 20px; border-radius: 20px; font-family: monospace;">
+					<h2>Reciept for {{ OrderData[1]['narration'] }} </h2>
+					<p>To be delivered by: {{ OrderData[1]['delivery_period_time'] }} </p>
+					<p>To be delivered on: {{ OrderData[1]['delivery_period_date'] }} </p>
+					<p>To be delivered at: {{ OrderData[1]['delivery_address_period'] }} </p>
+					<p>Print Format: {{ OrderData[1]['print_format'] }} </p>
+					<hr>
+					<p>To be delivered from <b>{{ OrderData[1]['address_close'] }}</b> Point </p>
+					<p>Amount to be paid: {{ OrderData[1]['price'] }} </p>
+					<p>Order Password: {{ OrderData[1]['password'] }} </p>
+					<hr>
+					<p>Contact Number: {{ OrderData[1]['phone_number'] }} </p>
+					<p>Contact Email: {{ OrderData[0]['email'] }} </p>
+				</div>
+
+				<div class="image-list" style="overflow-x: auto; overflow-y: hidden; display: flex; align-items: center; justify-content: space-between;">
+					{% if "image" in getMIME(OrderData[1]['image' + ToString(n)]) %}
+						{% for n in range(OrderData[2]) %}
+
+							<img src="data:{{ getMIME(OrderData[1]['image' + ToString(n)]) }};base64,{{ OrderData[1]['image' + ToString(n)] }}" class="order-image" style="aspect-ratio: 2/3; width: 300px;  border: 1px solid black; border-radius: 20px; margin-left: 10px; margin-top: 20px;">
+
+						{% endfor %}
+					{% else %}
+						{% for n in range(OrderData[2]) %}
+
+							
+							<iframe style="aspect-ratio: 2/3; width: 300px;  border: 1px solid black; border-radius: 20px; margin-left: 10px; margin-top: 20px;" src="data:application/pdf;base64,{{ OrderData[1]['image' + ToString(n)] }}">
+
+							</iframe>
+
+						{% endfor %}
+					{% endif %}
+				</div>
+
+				<br>
+
+				<div class="view-order" style="background: #ff000063; display: grid; place-items: center; height: 50px;">
+					<a style="text-decoration: none; color: black;" href="/delete-order/{{ OrderData[1]['id'] }}"><p>Withdraw Order</p></a>
+				</div>
+
+
+			{% else %}
+				<p>No order information to display</p>
+			{% endif %}
+
+
+			<div id="html-break"> {{ HTMLBreak_("6") }} </div>
+
+		</main>
+
+		<main id="document-upload-screen" style="display: none;">
+			<h2 class="welcome-text">Document Upload</h2>
+
+			{% if UploadData != "None" %}
+				<form action="/upload-documents" method="POST" enctype="multipart/form-data">
+					<input type="hidden" name="order_id" value="{{ UploadData[1] }}">	
+					{% for up in UploadData[3](UploadData[2]) %}
+						<div class="form-files">
+							<h2>{{ up }}</h2>
+							<span>Select Documents</span><br><span>select the list of documents/images<br>you want to print</span><br>
+							<div>
+								<input type="file" name="documents_to_print_{{ up }}" id="order-documents" accept=".jpg, .jpeg, .png, .pdf, .docx, .doc, .xls, .pptx">
+							</div>
+						</div>
+					{% endfor %}
+				<button class="button-esd" id="upload-btn" onclick="openLoader()">Upload</button>
+
+				</form>
+			{% else %}
+				<p>Place an order to select documents</p>
+			{% endif %}
+
+
+			<div id="html-break"> {{ HTMLBreak_("6") }} </div>
+
+		</main>
+
+		<main style="display: none;" id="merchant-screen">
+			<h2 class="welcome-text">Merchant</h2>
+			<form action="/verify-merchant" method="POST" style="display: flex; align-items: center; justify-content: space-between;">
+				<input type="number" name="merchant_id" class="BasicInputs" style="width: 80%" placeholder="Merchant ID">
+				<button class="button-esd" style="width: 30%;">Login</button>
+			</form>
+
+			<hr>
+			<h2>Orders</h2>
+			{% if MerchantData[0][0] != "None" %}
+				{% for order in MerchantData[1] %}
+					
+					<a style="color: inherit; text-decoration: none;" href="/merchant-view-order/{{ order['id'] }}">
+						<div class="order-list-view">
+							<div class="olv-count">{{ order['number_of_copies'] }} </div>
+							<div class="olv-name">{{ order['narration'] }} </div>
+							<div class="olv-close">{{ order['address_close'] }} </div>
+							<div class="olv-price">&#8358; {{ (order['price']).replace('N', '') }} </div>
+						</div>
+					</a>
+
+				{% endfor %}
+
+			{% else %}
+				<!--<p style="color: grey;"> {{ MerchantData[0][1] }} </p>-->
+				<p>No Orders for now</p>
+			{% endif %}
+
+		</main>
+	</div>
+
+	<nav>
+        <div id="home-trigger"><img src=" {{ url_for('static', filename='media/icons8-home-48.png') }} "></div>
+        <!-- <div id="favourites-trigger">&nbsp;</div> -->
+        <div id="create-trigger"><img src=" {{ url_for('static', filename='media/icons8-plus-50.png') }} "></div>
+        <div id="merchant-trigger"><img src="{{ url_for('static', filename='media/merchant.png') }} "></div>
+        <div id="profile-trigger"><img src=" {{ url_for('static', filename='media/icons8-user-48.png') }} "></div>
+    </nav>
+
+<script type="text/javascript">
+    current_screen = {{ ScreenID }}
+</script>
+<script src=" {{ url_for('static', filename='js/App.js') }} "></script>
+<script src=" {{ url_for('static', filename='js/ScreenManager.js') }} "></script>
+</body>
+</html>

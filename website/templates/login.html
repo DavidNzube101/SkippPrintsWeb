@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Login to your Vidbuy account</title>
+	<style type="text/css">
+		body{
+			background: white;
+		}
+		main{
+			height: 100vh;
+			display: grid;
+			place-items: center;
+		}
+		main form{
+			background: #08173436;
+			height: 60%;
+			border-radius: 20px;
+			width: 80%;
+			place-items: center;
+			display: grid;
+		}
+		form p{
+			background: #dd22225c;/*#08173436;*/
+			padding: 10px;
+			font-family: monospace;
+			border-radius: 10px;
+			color: white;
+			width: 80%;
+			text-align: center;
+		}
+		form input{
+			outline: none;
+			border: 0;
+			width: 70%;
+			padding: 10px;
+			border-radius: 20px;
+			background: white;
+		}
+		form button{
+			outline: none;
+			font-size: 20px;
+			padding: 10px;
+			border-radius: 20px;
+			background: #081734;
+			color: white;
+			border: 0;
+			width: 70%;
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<form action="/login" method="POST">
+			<h2>Login</h2>
+			{% if status != () %}
+				<p> {{ status[0] }} </p>
+			{% else %}
+				<p style="display: none;"></p>
+			{% endif %}
+			<input type="text" placeholder="Your Email" name="user_email">
+			<input type="password" placeholder="Your Password" name="user_password">
+			<button>Submit</button>
+		</form>
+	</main>
+</body>
+</html>

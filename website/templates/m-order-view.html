@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> {{ OrderData['narration'] }} </title>
+	<style type="text/css">
+		form input{
+			margin: 10px;
+			border: 0;
+			width: 80%;
+			background: #dbdbdb;
+			box-shadow: 0 0 2rem rgba(0, 0, 0, 0.1);
+			border-radius: 20px;
+			padding: 20px;
+		}
+		form button, button{
+			background: #29509c;/*#081734;*/
+			padding: 10px;
+			width: 80%;
+			outline: none;
+			border: 0;
+			color: white;
+			margin: 10px;
+			border-radius: 20px;
+		}
+	</style>
+</head>
+<body>
+	
+	{% if status_text == "Client's code doesn't match" %}
+		<div class="order-reciept" style="background: #f5f5f5; padding: 20px; border-radius: 20px; font-family: monospace;">
+			<h2>Details for {{ OrderData['narration'] }} </h2>
+			<p>To be delivered by: {{ OrderData['delivery_period_time'] }} </p>
+			<p>To be delivered on: {{ OrderData['delivery_period_date'] }} </p>
+			<p>To be delivered at: {{ OrderData['delivery_address_period'] }} </p>
+			<p>Print Format: {{ OrderData['print_format'] }} </p>
+			<hr>
+			<p>To be delivered from <b>{{ OrderData['address_close'] }}</b> Point </p>
+			<hr>
+			<p>Contact Number: {{ OrderData['phone_number'] }} </p>
+			<p>Contact Email: {{ OrderData['email'] }} </p>
+		</div>
+		<hr>
+		<h2>Validate Delivery</h2>
+		<p style="background: #ff000040; color: red; font-family: monospace; width: fit-content; padding: 10px; border-radius: 10px;">{{ status_text }}</p>
+		<form action="/verify-order-password" method="POST" style="display: flex; align-items: center; justify-content: space-between;">
+			<input type="number" name="order_password" style="width: 80%" placeholder="Client's Order Code">
+			<input type="hidden" value="{{ OrderData['id'] }}" name="order_id">
+			<button style="width: 30%;">Validate</button>
+		</form>
+
+	{% elif status_text == "" %}
+		<div class="order-reciept" style="background: #f5f5f5; padding: 20px; border-radius: 20px; font-family: monospace;">
+			<h2>Details for {{ OrderData['narration'] }} </h2>
+			<p>To be delivered by: {{ OrderData['delivery_period_time'] }} </p>
+			<p>To be delivered on: {{ OrderData['delivery_period_date'] }} </p>
+			<p>To be delivered at: {{ OrderData['delivery_address_period'] }} </p>
+			<p>Print Format: {{ OrderData['print_format'] }} </p>
+			<hr>
+			<p>To be delivered from <b>{{ OrderData['address_close'] }}</b> Point </p>
+			<hr>
+			<p>Contact Number: {{ OrderData['phone_number'] }} </p>
+			<p>Contact Email: - </p>
+		</div>
+		<hr>
+		<h2>Validate Delivery</h2>
+		<p>{{ status_text }}</p>
+		<form action="/verify-order-password" method="POST" style="display: flex; align-items: center; justify-content: space-between;">
+			<input type="number" name="order_password" style="width: 80%" placeholder="Client's Order Code">
+			<input type="hidden" value="{{ OrderData['id'] }}" name="order_id">
+			<button style="width: 30%;">Validate</button>
+		</form>
+
+
+	{% else %}
+		<div style="display: flex; align-items: center; justify-content: space-between;">
+			<p style="background: #20ff0040; color: #085d29; font-family: monospace; width: fit-content; padding: 10px; border-radius: 10px;">{{ status_text }}</p>
+			<a href="/verify-merchant">
+				<button>Continue</button>
+			</a>
+		</div>
+	{% endif %}
+	
+</body>
+</html>
