@@ -6,6 +6,7 @@ from . import DateToolKit as dtk
 
 import base64
 import imghdr
+import random
 import datetime as dt
 from datetime import datetime
 
@@ -38,7 +39,7 @@ def HTMLBreak(n):
 def get_mime_type(data):
     decoded_data = base64.b64decode(data)
     image_type = imghdr.what(None, h=decoded_data)
-    return f'image/{image_type}' if image_type else f'text/{image_type}'
+    return f'image/{image_type}' if image_type else 'application/pdf'
 
 def calcTimeDifference(dpt, ct):
 	return [int(x) for x in ("[" + str(datetime.strptime(dpt, "%H:%M") - datetime.strptime(ct, "%H:%M:%S")).replace(":", ", ").replace("-1 day, ", "") + "]").strip("[]").split(", ")]

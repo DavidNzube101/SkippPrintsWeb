@@ -78,7 +78,7 @@
 										let hString_{{ UserOrder['id'] }} = h.toString().padStart(2, "0")
 										let mString_{{ UserOrder['id'] }} = m.toString().padStart(2, "0")
 										let sString_{{ UserOrder['id'] }} = s.toString().padStart(2, "0")
-										console.log(`${hString_{{ UserOrder['id'] }}}:${mString_{{ UserOrder['id'] }}}:${sString_{{ UserOrder['id'] }}}`)
+										// console.log(`${hString_{{ UserOrder['id'] }}}:${mString_{{ UserOrder['id'] }}}:${sString_{{ UserOrder['id'] }}}`)
 										document.querySelector(".hour_{{ UserOrder['id'] }}").innerHTML = hString_{{ UserOrder['id'] }}
 										document.querySelector(".minute_{{ UserOrder['id'] }}").innerHTML = mString_{{ UserOrder['id'] }}
 										document.querySelector(".seconds_{{ UserOrder['id'] }}").innerHTML = sString_{{ UserOrder['id'] }}
@@ -87,9 +87,14 @@
 
 								countDownTimer_{{ UserOrder['id'] }}({{ TimeDifference(UserOrder['delivery_period_time'], CurrentTime)[0] }}, {{ TimeDifference(UserOrder['delivery_period_time'], CurrentTime)[1] }}, {{ TimeDifference(UserOrder['delivery_period_time'], CurrentTime)[2] }})
 							</script>
-							<div class="view-order">
-								<a style="text-decoration: none; color: black;" href="/view-order/{{ CUser['name'] }}/order/{{ UserOrder['id'] }}"><p>View Order</p></a>
-							</div>
+							<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+								<div class="view-order" style="width: 500%; margin-right: 10px;">
+									<a style="text-decoration: none; color: black;" href="/view-order/{{ CUser['name'] }}/order/{{ UserOrder['id'] }}"><p>View Order</p></a>
+								</div>
+								<div class="view-order" style="background: #ff000063;">
+									<a style="background: #ff000063; text-decoration: none; color: black;" href="/delete-order/{{ UserOrder['id'] }}"><p style="scale: 1.5;">&times;</p></a>
+								</div>
+							</div>							
 						</div>
 					</div>
 				{% endfor %}
@@ -102,30 +107,16 @@
 
 		<main id="create-screen" style="display: none;">
 			<h2 class="welcome-text">Order</h2>
-			<h2>Order a print</h2>
+			<h2>Order a print job</h2>
 			<form action="/create-order" class="form-container" method="POST">
 				<input class="BasicInputs order-narration" name="narration" placeholder="Narration" required type="text">
-				<div class="form-price-container">
-					<article>
-						<input class="BasicInputs order-number_of_copies" name="noc" value="0" placeholder="Number of items" required type="number" max="50">
-						<input class="BasicInputs order-price" name="price" value="&#8358; 0.00" placeholder="Price" required type="hidden">
-						<input class="BasicInputs order-price2" name="price2" value="&#8358; 0.00" placeholder="Price" required type="text" disabled>
-						<button type="button" onclick="calculatePrice()" class="button-esd calculate-price">Calculate</button>
-					</article>
-					<div class="cost_breakdown">
-						Price Per Page (Colored) = &#8358;400
+				
+				<select required name="print_format" class="order-print-format BasicInputs">
+					<option>Select print format</option>
+					<option>Coloured Format</option>
+					<option>Black & White Format</option>
+				</select>
 
-						<!-- <div class="html-break">{{ HTMLBreak_("1") }}</div> -->
-						<br>
-						
-						Price Per Page (Black & White) = &#8358;300
-
-						<!-- <div class="html-break">{{ HTMLBreak_("1") }}</div> -->
-						<br>
-						
-						Delivery Cost = &#8358;1000
-					</div>
-				</div>
 				<div class="form-period-container">
 					<span>Delivery Date</span><br><span>set a date you'll be available</span><br>
 					<input required class="BasicInputs order-delivery_date_period" name="delivery_date_period" placeholder="Delivery Date" type="date">
@@ -147,11 +138,27 @@
 
 				<input type="number" required name="phone_num" placeholder="Phone Number" class="BasicInputs">
 
-				<select required name="print_format" class="order-print-format BasicInputs">
-					<option>Select print format</option>
-					<option>Coloured Format</option>
-					<option>Black & White Format</option>
-				</select>
+				<div class="form-price-container">
+					<article>
+						<input class="BasicInputs order-number_of_copies" name="noc" value="0" placeholder="Number of items" required type="number" max="50">
+						<input class="BasicInputs order-price" name="price" value="&#8358; 0.00" placeholder="Price" required type="hidden">
+						<input class="BasicInputs order-price2" name="price2" value="&#8358; 0.00" placeholder="Price" required type="text" disabled>
+						<button type="button" onclick="calculatePrice()" class="button-esd calculate-price">Calculate</button>
+					</article>
+					<div class="cost_breakdown">
+						Price Per Page (Colored) = &#8358;400
+
+						<!-- <div class="html-break">{{ HTMLBreak_("1") }}</div> -->
+						<br>
+						
+						Price Per Page (Black & White) = &#8358;300
+
+						<!-- <div class="html-break">{{ HTMLBreak_("1") }}</div> -->
+						<br>
+						
+						Delivery Cost = &#8358;1000
+					</div>
+				</div>
 
 				<button class="button-esd" id="next-order-btn">Next</button>
 			</form>
@@ -184,22 +191,16 @@
 				</div>
 
 				<div class="image-list" style="overflow-x: auto; overflow-y: hidden; display: flex; align-items: center; justify-content: space-between;">
-					{% if "image" in getMIME(OrderData[1]['image' + ToString(n)]) %}
-						{% for n in range(OrderData[2]) %}
-
+					
+					{% for n in range(OrderData[2]) %}
+						{% if "image" in getMIME(OrderData[1]['image' + ToString(n)]) %}
 							<img src="data:{{ getMIME(OrderData[1]['image' + ToString(n)]) }};base64,{{ OrderData[1]['image' + ToString(n)] }}" class="order-image" style="aspect-ratio: 2/3; width: 300px;  border: 1px solid black; border-radius: 20px; margin-left: 10px; margin-top: 20px;">
-
-						{% endfor %}
-					{% else %}
-						{% for n in range(OrderData[2]) %}
-
-							
-							<iframe style="aspect-ratio: 2/3; width: 300px;  border: 1px solid black; border-radius: 20px; margin-left: 10px; margin-top: 20px;" src="data:application/pdf;base64,{{ OrderData[1]['image' + ToString(n)] }}">
-
+						{% else %}	
+							<iframe style="aspect-ratio: 2/3; width: 300px;  border: 1px solid black; border-radius: 20px; margin-left: 10px; margin-top: 20px;" src="data:{{ OrderData[1]['image' + ToString(n)] }};base64,{{ OrderData[1]['image' + ToString(n)] }}">
 							</iframe>
-
-						{% endfor %}
-					{% endif %}
+						{% endif %}
+					{% endfor %}
+					
 				</div>
 
 				<br>

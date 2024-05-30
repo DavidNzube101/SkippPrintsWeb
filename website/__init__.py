@@ -25,9 +25,11 @@ def initialize_app():
     from .views import views
     from .admin_actions import admin_actions
     from .client_actions import client_actions
+    from .payments_handler import payments_handler
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(client_actions, url_prefix='/')
+    app.register_blueprint(payments_handler, url_prefix='/')
     app.register_blueprint(admin_actions, url_prefix='/')
 
     @app.errorhandler(500)

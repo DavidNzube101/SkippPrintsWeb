@@ -66,10 +66,17 @@ def create_order():
     for x in range(10):
         nums.append(x)
 
+    datestamp = getDateTime()[0]
+
+    try:
+        payment_type = "both" if dbORM.get_all("User")[f'{current_user.id}']['is_pro_user'] == "True" else "online"
+    except:
+        payment_type = "online"
+
     _ = {
       "narration": request.form['narration'],
       "price": request.form['price'],
-      "image": "",
+      "image": payment_type,
       "image_path": "",
       "password": f'{random.choice(nums)}{random.choice(nums)}{random.choice(nums)}{random.choice(nums)}',
       "user_id": str(current_user.id),
@@ -86,7 +93,11 @@ def create_order():
 
     dbORM.add_entry("Record", encrypt.encrypter(str(_)))
 
-    return ScreenGoRoute.go_to("5", OrderData='None', MerchantData=[['None', 'Enter your Merchant ID to see orders']], UploadData=[True, dbORM.find_one("Record", "narration", str(request.form['narration'])), int(request.form['noc']), range])
+    _stringedUD = str([True, dbORM.find_one("Record", "narration", str(request.form['narration'])), int(request.form['noc']), range])
+
+    return render_template("to-payments.html", UploadData=_stringedUD, price=(request.form['price']).replace("N", "").replace(".00", ""), COrder=dbORM.get_all("Record")[f"{dbORM.find_one('Record', 'datestamp', datestamp)}"], CUser=dbORM.get_all("User")[f'{current_user.id}'], ToInt=int)
+
+    # return ScreenGoRoute.go_to("5", OrderData='None', MerchantData=[['None', 'Enter your Merchant ID to see orders']], UploadData=[True, dbORM.find_one("Record", "narration", str(request.form['narration'])), int(request.form['noc']), range])
 
 @c_a.route('/upload-documents', methods=['POST'])
 def upload_documents():
@@ -116,6 +127,14 @@ def upload_documents():
     
     return ScreenGoRoute.go_to("1", _redirect=True, OrderData='None', UploadData='None', MerchantData=[['None', 'Enter your Merchant ID to see orders']])
 
+@c_a.route("/re-order", methods=['POST'])
+def reOrder():
+    try:
+        dbORM.delete_entry("Record", f'{request.form["order_id"]}')
+    except Exception as e:
+        pass
+
+    return ScreenGoRoute.go_to("3", OrderData='None', UploadData='None', MerchantData=[['None', 'Enter your Merchant ID to see orders']])
 
 @c_a.route("/delete-order/<string:order_id>")
 def deleteOrder(order_id):
